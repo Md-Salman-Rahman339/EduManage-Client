@@ -10,7 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^7.1.0",
     "@tailwindcss/vite": "^4.1.6",
+    "keen-slider": "^6.8.6",
     "localforage": "^1.10.0",
     "match-sorter": "^8.0.1",
     "react": "^19.1.0",
