@@ -1,4 +1,5 @@
 import React from 'react'
+import { MdCastForEducation } from 'react-icons/md'
 
 const Navbar = () => {
     const navOptions = <>
@@ -18,7 +19,7 @@ const Navbar = () => {
                     {navOptions}
                 </ul>
             </div>
-            <a className="btn btn-ghost normal-case text-xl">EduManage</a>
+            <a className="btn btn-ghost normal-case text-xl"><MdCastForEducation /> EduManage</a>
         </div>
         <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal px-1">
