@@ -1,19 +1,27 @@
 import Lottie from 'lottie-react';
-import register from '../../assets/lottie/register.json'
+import registerL from '../../assets/lottie/register.json'
 import { useForm } from 'react-hook-form';
+import { useContext } from 'react';
+import { AuthContext } from '../../providers/AuthProvider';
 
 const SignUp = () => {
+    const {createUser} = useContext(AuthContext);
 
     const {register,handleSubmit,formState:{errors}}=useForm();
     const onSubmit=data=>{
         console.log(data)
+         createUser( data.name,data.photo,data.role,data.email, data.password)
+        .then(result => {
+            const loggedUser = result.user;
+            console.log(loggedUser);
+        })
     }
     return (
         <div className="hero min-h-screen bg-base-200">
   <div className="hero-content flex-col lg:flex-row-reverse">
     <div className="text-center lg:text-left">
       <h1 className="text-5xl font-bold">Sign up now!</h1>
-      <Lottie animationData={register} loop:true></Lottie>
+      <Lottie animationData={registerL} ></Lottie>
       
     </div>
     <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
@@ -30,7 +38,7 @@ const SignUp = () => {
             <span className="label-text">Photo</span>
           </label>
           <input type="url" {...register("photo", { required: true })} name="photo" placeholder="Photo Url" className="input input-bordered" />
-           {errors.name && <span className="text-red-600">Photo is required</span>}
+           {errors.photo && <span className="text-red-600">Photo is required</span>}
         </div>
         <div className="form-control">
           <label className="label">
@@ -49,20 +57,20 @@ const SignUp = () => {
                 <option value="student">Student</option>
                 <option value="admin">Admin</option>
             </select>
-             {errors.email && <span className="text-red-600">Roll is required</span>}
+             {errors.role && <span className="text-red-600">Roll is required</span>}
         </div>
         <div className="form-control">
           <label className="label">
             <span className="label-text">Password</span>
           </label>
-          <input type="text"  {...register("password", { required: true, minLength: 6, maxLength: 20 })} placeholder="password" className="input input-bordered" />
+         <input type="password" {...register("password", { required: true, minLength: 6, maxLength: 20 })} placeholder="password" className="input input-bordered" />
            {errors.password?.type === 'required' && <p className="text-red-600">Password is required</p>}
           <label className="label">
             <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
           </label>
         </div>
         <div className="form-control mt-6">
-          <button className="btn btn-primary bg-green-500 text-white">Sign Up</button>
+          <button className="btn btn-primary bg-purple-800 text-white" type='submit'>Sign Up</button>
         </div>
       </form>
     </div>
