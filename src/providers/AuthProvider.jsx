@@ -19,7 +19,7 @@ import { auth } from "../firebase/firebase.init";
  
      const signIn = (email, password) => {
          setLoading(true);
-         return signInWithEmailAndPassword(email, password);
+         return signInWithEmailAndPassword(auth,email, password);
      }
  
      const logOut = () =>{

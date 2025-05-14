@@ -1,8 +1,15 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { MdCastForEducation } from 'react-icons/md'
 import { Link } from 'react-router-dom'
+import { AuthContext } from '../../../providers/AuthProvider';
 
 const Navbar = () => {
+    const { user, logOut } = useContext(AuthContext);
+    const handleLogOut = () => {
+        logOut()
+            .then(() => { })
+            .catch(error => console.log(error));
+    }
     const navOptions = <>
          <li><Link to="/">Home</Link></li>
       
@@ -28,7 +35,16 @@ const Navbar = () => {
             </ul>
         </div>
         <div className="navbar-end">
-            <Link to="/login" className="btn bg-green-500 text-white">Login</Link>
+
+            {
+                user?<>
+                <button onClick={handleLogOut} className="btn bg-green-500 text-white" >Logout </button>
+                </>:<>
+
+                <Link to="/login" className="btn bg-green-500 text-white">Login</Link>
+                </>
+            }
+            
         </div>
     </div>
     </>

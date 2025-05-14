@@ -3,6 +3,7 @@ import registerL from '../../assets/lottie/register.json'
 import { useForm } from 'react-hook-form';
 import { useContext } from 'react';
 import { AuthContext } from '../../providers/AuthProvider';
+import { Link } from 'react-router-dom';
 
 const SignUp = () => {
     const {createUser} = useContext(AuthContext);
@@ -10,7 +11,7 @@ const SignUp = () => {
     const {register,handleSubmit,formState:{errors}}=useForm();
     const onSubmit=data=>{
         console.log(data)
-         createUser( data.name,data.photo,data.role,data.email, data.password)
+         createUser(data.email, data.password)
         .then(result => {
             const loggedUser = result.user;
             console.log(loggedUser);
@@ -73,6 +74,7 @@ const SignUp = () => {
           <button className="btn btn-primary bg-purple-800 text-white" type='submit'>Sign Up</button>
         </div>
       </form>
+      <p><small>Already have an account <Link to="/login">Login</Link></small></p>
     </div>
   </div>
 </div>

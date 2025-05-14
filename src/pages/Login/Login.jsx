@@ -3,6 +3,7 @@ import loginLottie from '../../assets/lottie/edulogin.json'
 import Lottie from 'lottie-react';
 import { AuthContext } from '../../providers/AuthProvider';
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const Login = () => {
 
@@ -16,6 +17,15 @@ const Login = () => {
         .then(result=>{
             const user=result.user;
             console.log(user)
+               Swal.fire({
+                title: 'User Login Successful.',
+                showClass: {
+                  popup: 'animate__animated animate__fadeInDown'
+                },
+                hideClass: {
+                  popup: 'animate__animated animate__fadeOutUp'
+                }
+              })
         })
         // console.log(email,password)
     }
