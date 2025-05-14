@@ -1,9 +1,10 @@
 import React from 'react'
 import { MdCastForEducation } from 'react-icons/md'
+import { Link } from 'react-router-dom'
 
 const Navbar = () => {
     const navOptions = <>
-         <li><a>Home</a></li>
+         <li><Link to="/">Home</Link></li>
       
         
      </>
@@ -19,7 +20,7 @@ const Navbar = () => {
                     {navOptions}
                 </ul>
             </div>
-            <a className="btn btn-ghost normal-case text-xl"><MdCastForEducation /> EduManage</a>
+            <Link to="/" className="btn btn-ghost normal-case text-xl"><MdCastForEducation /> EduManage</Link>
         </div>
         <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal px-1">
@@ -27,7 +28,7 @@ const Navbar = () => {
             </ul>
         </div>
         <div className="navbar-end">
-            <a className="btn">Login</a>
+            <Link to="/login" className="btn bg-green-500 text-white">Login</Link>
         </div>
     </div>
     </>
