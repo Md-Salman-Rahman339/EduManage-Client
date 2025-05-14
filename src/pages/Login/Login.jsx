@@ -1,14 +1,23 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import loginLottie from '../../assets/lottie/edulogin.json'
 import Lottie from 'lottie-react';
+import { AuthContext } from '../../providers/AuthProvider';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
+
+    const {signIn}=useContext(AuthContext);
       const handleLogin=event=>{
         event.preventDefault();
         const form=event.target;
         const email=form.email.value;
         const password=form.password.value;
-        console.log(email,password)
+        signIn(email,password)
+        .then(result=>{
+            const user=result.user;
+            console.log(user)
+        })
+        // console.log(email,password)
     }
 
   return (
@@ -16,27 +25,10 @@ const Login = () => {
     <div className="hero-content flex-col md:flex-row-reverse">
         <div className="text-center md:w-1/2 lg:text-left">
             <h1 className="text-5xl font-bold items-start">Login now!</h1>
-            <Lottie animationData={loginLottie}></Lottie>
+            <Lottie animationData={loginLottie} loop:true></Lottie>
         </div>
         <div className="card md:w-1/2 max-w-sm shadow-2xl bg-base-100">
             <form onSubmit={handleLogin} className="card-body">
-                  <div className="form-control">
-                    <label className="label">
-                        <span className="label-text">Name</span>
-                    </label>
-                    <input type="name" name="name" placeholder="Write your name" className="input input-bordered" />
-                </div>
-                  <div className="form-control">
-                    <label className="label">
-                        <span className="label-text">Photo</span>
-                    </label>
-                    <input type="photo" name="photo" placeholder="photo link" className="input input-bordered" />
-                </div>
-
-
-
-
-
                 <div className="form-control">
                     <label className="label">
                         <span className="label-text">Email</span>
@@ -56,6 +48,7 @@ const Login = () => {
                     <input className="btn btn-primary bg-green-500 text-white" type="submit" value="Login" />
                 </div>
             </form>
+            <p><small>New Here? <Link to="/signup">Create an account</Link> </small></p>
         </div>
     </div>
 </div>
