@@ -26,11 +26,31 @@ import { auth } from "../firebase/firebase.init";
          setLoading(true);
          return signOut(auth);
      }
-      const updateUserProfile = (name, photo) => {
-        return updateProfile(auth.currentUser, {
-            displayName: name, photoURL: photo,
-        });
-    }
+    //   const updateUserProfile = (name,  photoURL) => {
+    //     return updateProfile(auth.currentUser, {
+    //         displayName: name, photoURL:  photoURL,
+    //     });
+    // }
+                const updateUserProfile = (name, photoURL = "") => {
+            setLoading(true);
+            const updateData = {
+                displayName: name
+            };
+            
+            // Only add photoURL if it's provided
+            if (photoURL) {
+                updateData.photoURL = photoURL;
+            }
+
+            return updateProfile(auth.currentUser, updateData)
+                .then(() => {
+                setLoading(false);
+                })
+                .catch(error => {
+                setLoading(false);
+                throw error;
+                });
+            }
  
      useEffect( () =>{
          const unsubscribe = onAuthStateChanged(auth, currentUser =>{

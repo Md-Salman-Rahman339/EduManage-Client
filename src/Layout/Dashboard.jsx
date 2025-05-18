@@ -7,12 +7,14 @@ import { fadeIn } from "../utils/motion";
 // import useAdmin from "../hooks/useAdmin";
 import {
   FaHome, FaList, FaUsers, FaUtensils, FaBook, FaShoppingCart, FaCalendar, FaAd, FaEnvelope, FaSearch,
-  FaChalkboardTeacher
+  FaChalkboardTeacher,
+  FaUser
 } from "react-icons/fa";
 
 const navItems = (isAdmin, cartLength) => {
   return isAdmin
     ? [
+         { to: "/dashboard/profile", icon: <FaUser />, label: "My Profile" },
         { to: "/dashboard/adminHome", icon: <FaHome />, label: "Admin Home" },
         { to: "/dashboard/addItems", icon: <FaUtensils />, label: "Add Course" },
         { to: "/dashboard/manageItems", icon: <FaList />, label: "Manage Courses" },

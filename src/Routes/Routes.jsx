@@ -10,6 +10,7 @@ import ClassDetailsPage from "../pages/Classes/ClassDetailsPage";
 import PrivateRoute from "./PrivateRoute";
 import TeachOnEdumanage from "../Dashboard/TeachOnEdumanage/TeachOnEdumanage";
 import Dashboard from "../Layout/Dashboard";
+import Profile from "../pages/Profile/Profile";
 
 
 
@@ -71,7 +72,11 @@ import Dashboard from "../Layout/Dashboard";
              {
           path:'applyforteacher',
           element:<TeachOnEdumanage></TeachOnEdumanage>,
-        }
+           },
+           {
+            path:'profile',
+            element:<Profile></Profile>
+           }
 
           ]
 
