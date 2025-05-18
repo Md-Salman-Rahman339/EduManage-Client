@@ -28,7 +28,7 @@ import { auth } from "../firebase/firebase.init";
      }
       const updateUserProfile = (name, photo) => {
         return updateProfile(auth.currentUser, {
-            displayName: name, photoURL: photo
+            displayName: name, photoURL: photo,
         });
     }
  

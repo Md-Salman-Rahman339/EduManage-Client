@@ -5,8 +5,10 @@ import { useContext } from 'react';
 import { AuthContext } from '../../providers/AuthProvider';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import useAxiosPublic from '../../hooks/useAxiosPublic';
 
 const SignUp = () => {
+  const axiosPublic=useAxiosPublic();
     const {createUser, updateUserProfile} = useContext(AuthContext);
 
     const {register,handleSubmit,reset,formState:{errors}}=useForm();
@@ -19,7 +21,14 @@ const SignUp = () => {
             console.log(loggedUser);
                updateUserProfile(data.name, data.photoURL,data.role)
                 .then(() => {
-                    console.log('user profile info updated')
+                  const userInfo={
+                    name:data.name,
+                    email:data.email,
+                    role:data.role
+                  }
+                  axiosPublic.post('/users',userInfo)
+                  .then(res=>{
+                     console.log('user added into database')
                     reset();
                     Swal.fire({
                         position: 'top-end',
@@ -30,6 +39,9 @@ const SignUp = () => {
                     });
                     navigate('/');
 
+
+                  })
+                   
                 })
                 .catch(error => console.log(error))
             
@@ -66,7 +78,7 @@ const SignUp = () => {
           <input type="email"  {...register("email", {required: true})} name="email" placeholder="email" className="input input-bordered" />
            {errors.email && <span className="text-red-600">Email is required</span>}
         </div>
-       <div className="form-control">
+       {/* <div className="form-control">
             <label className="label">
                 <span className="label-text">Role</span>
             </label>
@@ -77,7 +89,7 @@ const SignUp = () => {
                 <option value="admin">Admin</option>
             </select>
              {errors.role && <span className="text-red-600">Roll is required</span>}
-        </div>
+        // </div> */}
         <div className="form-control">
           <label className="label">
             <span className="label-text">Password</span>
