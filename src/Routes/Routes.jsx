@@ -11,6 +11,7 @@ import PrivateRoute from "./PrivateRoute";
 import TeachOnEdumanage from "../Dashboard/TeachOnEdumanage/TeachOnEdumanage";
 import Dashboard from "../Layout/Dashboard";
 import Profile from "../pages/Profile/Profile";
+import AllUsers from "../Dashboard/AllUsers/AllUsers";
 
 
 
@@ -76,7 +77,10 @@ import Profile from "../pages/Profile/Profile";
            {
             path:'profile',
             element:<Profile></Profile>
-           }
+           }, {
+            path:'users',
+            element:<AllUsers></AllUsers>
+           },
 
           ]
 
