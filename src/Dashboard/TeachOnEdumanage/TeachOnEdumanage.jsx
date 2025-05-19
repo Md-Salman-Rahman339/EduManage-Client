@@ -2,15 +2,18 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
+import Swal from "sweetalert2";
 
 const TeachOnEdumanage = () => {
-  const { user, role } = useAuth(); // assuming role comes from useAuth
+  const { user, role } = useAuth(); 
   const navigate = useNavigate();
+  const axiosPublic = useAxiosPublic();
 
   const [formData, setFormData] = useState({
-    name: user?.displayName || "",
-    email: user?.email || "",
-    image: user?.photoURL || "",
+    name: "",
+    email: "",
+    image: "",
     experience: "",
     title: "",
     category: "",
@@ -20,12 +23,23 @@ const TeachOnEdumanage = () => {
   const [requestStatus, setRequestStatus] = useState(null); // 'pending', 'approved', 'rejected'
 
   useEffect(() => {
-    // Fetch existing request status from backend if exists
-    axios.get(`/api/teacher-request/${user?.email}`).then((res) => {
-      if (res.data) {
-        setRequestStatus(res.data.status);
-      }
-    });
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        name: user.displayName || "",
+        email: user.email || "",
+        image: user.photoURL || "",
+      }));
+
+      // Fetch existing request status
+      axiosPublic.get(`/teacher-request/${user.email}`).then((res) => {
+        if (res.data) {
+          setRequestStatus(res.data.status);
+        }
+      }).catch((err) => {
+        console.error("Failed to fetch request status", err);
+      });
+    }
   }, [user]);
 
   const handleChange = (e) => {
@@ -35,27 +49,61 @@ const TeachOnEdumanage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Basic frontend validation
+    const { name, email, experience, title, category } = formData;
+    if (!name || !email || !experience || !title || !category) {
+      Swal.fire({
+        icon: "warning",
+        title: "Incomplete",
+        text: "Please fill in all required fields.",
+      });
+      return;
+    }
+
     try {
-      await axios.post("/api/teacher-request", formData);
+      await axiosPublic.post("/teacher-request", formData);
       setRequestStatus("pending");
+
+      Swal.fire({
+        icon: "success",
+        title: "Submitted!",
+        text: "Your request has been submitted for review.",
+      });
     } catch (err) {
       console.error(err);
+      Swal.fire({
+        icon: "error",
+        title: "Submission Failed",
+        text: err?.response?.data?.message || "Something went wrong!",
+      });
     }
   };
 
   const handleReRequest = async () => {
     try {
-      await axios.put(`/api/teacher-request/${user?.email}`, {
+      await axiosPublic.put(`/teacher-request/${user?.email}`, {
         ...formData,
         status: "pending",
       });
       setRequestStatus("pending");
+
+      Swal.fire({
+        icon: "success",
+        title: "Re-Submitted!",
+        text: "Your request has been re-submitted for review.",
+      });
     } catch (err) {
       console.error(err);
+      Swal.fire({
+        icon: "error",
+        title: "Re-Submission Failed",
+        text: err?.response?.data?.message || "Something went wrong!",
+      });
     }
   };
 
-  if (role === "teacher") {
+  if (requestStatus === "approved") {
     return (
       <div className="p-6 max-w-xl mx-auto text-center">
         <h1 className="text-3xl font-bold text-green-600">Welcome, Teacher!</h1>
@@ -86,7 +134,7 @@ const TeachOnEdumanage = () => {
         </div>
       )}
 
-      {requestStatus !== "approved" && (
+      {requestStatus === "approved" && (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block font-medium">Name</label>
@@ -170,7 +218,7 @@ const TeachOnEdumanage = () => {
 
           <button
             type="submit"
-            className="w-full py-2 px-4  bg-green-500 hover:bg-blue-500 text-white rounded"
+            className="w-full py-2 px-4 bg-green-500 hover:bg-blue-500 text-white rounded"
           >
             Submit for Review
           </button>
