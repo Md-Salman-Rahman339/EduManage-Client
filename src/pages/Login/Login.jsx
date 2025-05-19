@@ -4,6 +4,7 @@ import Lottie from 'lottie-react';
 import { AuthContext } from '../../providers/AuthProvider';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import SocialLogin from '../../components/SocialLogin/SocialLogin';
 
 const Login = () => {
 
@@ -64,6 +65,7 @@ const Login = () => {
                 </div>
             </form>
             <p><small>New Here? <Link to="/signup">Create an account</Link> </small></p>
+            <SocialLogin></SocialLogin>
         </div>
     </div>
 </div>
