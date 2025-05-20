@@ -81,7 +81,7 @@ import useAxiosPublic from "../hooks/useAxiosPublic";
          return () => {
              return unsubscribe();
          }
-     }, [])
+     }, [axiosPublic])
  
      const authInfo = {
          user,

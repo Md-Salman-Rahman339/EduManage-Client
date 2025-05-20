@@ -10,6 +10,7 @@ import {
   FaChalkboardTeacher,
   FaUser
 } from "react-icons/fa";
+import useAdmin from "../hooks/useAdmin";
 
 const navItems = (isAdmin, cartLength) => {
   return isAdmin
@@ -38,8 +39,8 @@ const sharedLinks = [
 ];
 
 const Dashboard = () => {
-//   const [cart] = useCart();
-  const isAdmin =true;
+
+  const isAdmin =useAdmin();
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-br from-green-100 to-white rounded-3xl mb-8 mt-8">
