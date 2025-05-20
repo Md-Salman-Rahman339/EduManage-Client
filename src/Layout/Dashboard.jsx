@@ -18,7 +18,7 @@ const navItems = (isAdmin, cartLength) => {
          { to: "/dashboard/profile", icon: <FaUser />, label: "My Profile" },
         { to: "/dashboard/adminHome", icon: <FaHome />, label: "Admin Home" },
         { to: "/dashboard/addItems", icon: <FaUtensils />, label: "Add Course" },
-        { to: "/dashboard/manageItems", icon: <FaList />, label: "Manage Courses" },
+        { to: "/dashboard/teacherRequest", icon: <FaList />, label: "Teacher Request" },
         { to: "/dashboard/bookings", icon: <FaBook />, label: "Manage Enrollments" },
         { to: "/dashboard/users", icon: <FaUsers />, label: "All Users" },
          { to: "/dashboard/applyforteacher", icon: <FaChalkboardTeacher />, label: "Teach On Edumanage" },

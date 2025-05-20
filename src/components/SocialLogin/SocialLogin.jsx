@@ -9,21 +9,30 @@ const SocialLogin = () => {
       const axiosPublic=useAxiosPublic();
       const navigate=useNavigate();
  
-     const handleGoogleSignIn = () =>{
-         googleSignIn()
-         .then(result =>{
-             console.log(result.user);
-             const userInfo={
-                email:result.user?.email,
-                name:result.user?.displayName
-             }
-             axiosPublic.post('/users',userInfo)
-             .then(res=>{
-                console.log(res.data);
-                navigate('/');
-             })
-         })
-     }
+    const handleGoogleSignIn = () => {
+    googleSignIn()
+    .then(async (result) => {
+      const userInfo = {
+        email: result.user?.email,
+        name: result.user?.displayName,
+      };
+
+      try {
+        // Try to create user
+        await axiosPublic.post('/users', userInfo);
+      } catch (err) {
+        if (err.response && err.response.status === 400) {
+          console.log('User already exists, proceeding...');
+        } else {
+          console.error('Unexpected error:', err);
+          return;
+        }
+      }
+
+      navigate('/');
+    });
+};
+
   return (
          <div className="p-8">
              <div className="divider"></div>

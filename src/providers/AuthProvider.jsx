@@ -88,7 +88,8 @@ import useAxiosPublic from "../hooks/useAxiosPublic";
          loading,
          createUser,
          signIn,
-         googleProvider,
+        //  googleProvider,
+        googleSignIn,
          logOut,updateUserProfile
      }
      

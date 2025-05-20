@@ -134,7 +134,7 @@ const TeachOnEdumanage = () => {
         </div>
       )}
 
-      {requestStatus === "approved" && (
+      {(!requestStatus || requestStatus === "rejected") && (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block font-medium">Name</label>

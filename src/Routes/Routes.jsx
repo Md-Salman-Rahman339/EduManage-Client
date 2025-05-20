@@ -12,6 +12,7 @@ import TeachOnEdumanage from "../Dashboard/TeachOnEdumanage/TeachOnEdumanage";
 import Dashboard from "../Layout/Dashboard";
 import Profile from "../pages/Profile/Profile";
 import AllUsers from "../Dashboard/AllUsers/AllUsers";
+import AllTeacherRequests from "../Dashboard/AllTeacherRequest/AllTeacherRequest";
 
 
 
@@ -80,6 +81,10 @@ import AllUsers from "../Dashboard/AllUsers/AllUsers";
            }, {
             path:'users',
             element:<AllUsers></AllUsers>
+           },
+           {
+            path:'teacherRequest',
+            element:<AllTeacherRequests></AllTeacherRequests>
            },
 
           ]
