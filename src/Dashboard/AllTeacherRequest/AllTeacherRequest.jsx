@@ -1,13 +1,15 @@
-
 import { useQuery } from '@tanstack/react-query';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
+import useAdmin from '../../hooks/useAdmin';
 
 const AllTeacherRequests = () => {
   const axiosSecure = useAxiosSecure();
+  const [isAdmin, isAdminLoading] = useAdmin();
 
   const { data: requests = [], refetch } = useQuery({
     queryKey: ['teacher-requests'],
+    enabled: isAdmin, // Only fetch if admin
     queryFn: async () => {
       const res = await axiosSecure.get('/teacher-requests');
       return res.data;
@@ -39,6 +41,9 @@ const AllTeacherRequests = () => {
       Swal.fire('Error', 'Failed to reject request', 'error');
     }
   };
+
+  if (isAdminLoading) return <p>Loading...</p>;
+  if (!isAdmin) return <p className="text-center text-red-500">Access denied. Admins only.</p>;
 
   return (
     <div className="p-6">
@@ -73,30 +78,28 @@ const AllTeacherRequests = () => {
                 <td>{req.title}</td>
                 <td>{req.category}</td>
                 <td>
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs ${
-                      req.status === 'pending'
-                        ? 'bg-yellow-100 text-yellow-700'
-                        : req.status === 'approved'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-red-100 text-red-700'
-                    }`}
-                  >
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    req.status === 'pending'
+                      ? 'bg-yellow-100 text-yellow-700'
+                      : req.status === 'approved'
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-red-100 text-red-700'
+                  }`}>
                     {req.status}
                   </span>
                 </td>
                 <td className="space-x-2">
                   <button
                     onClick={() => handleApprove(req)}
-                    disabled={req.status === 'rejected'}
-                    className={`btn btn-success btn-sm ${req.status === 'rejected' && 'btn-disabled'}`}
+                    disabled={req.status !== 'pending'}
+                    className="btn btn-success btn-sm"
                   >
                     Approve
                   </button>
                   <button
                     onClick={() => handleReject(req)}
-                    disabled={req.status === 'rejected'}
-                    className={`btn btn-error btn-sm ${req.status === 'rejected' && 'btn-disabled'}`}
+                    disabled={req.status !== 'pending'}
+                    className="btn btn-error btn-sm"
                   >
                     Reject
                   </button>
