@@ -14,6 +14,7 @@ import Profile from "../pages/Profile/Profile";
 import AllUsers from "../Dashboard/AllUsers/AllUsers";
 import AllTeacherRequests from "../Dashboard/AllTeacherRequest/AllTeacherRequest";
 import Payment from "../Dashboard/Payment/Payment";
+import PaymentHistory from "../Dashboard/PaymentHistory/PaymentHistory";
 
 
 
@@ -63,6 +64,11 @@ import Payment from "../Dashboard/Payment/Payment";
            {
             path:'teacherRequest',
             element:<AllTeacherRequests></AllTeacherRequests>
+           },
+           {
+             path: 'paymentHistory',
+             element: <PaymentHistory></PaymentHistory>
+
            },
 
           ]

@@ -8,7 +8,8 @@ import { fadeIn } from "../utils/motion";
 import {
   FaHome, FaList, FaUsers, FaUtensils, FaBook, FaShoppingCart, FaCalendar, FaAd, FaEnvelope, FaSearch,
   FaChalkboardTeacher,
-  FaUser
+  FaUser,
+  FaStripe
 } from "react-icons/fa";
 import useAdmin from "../hooks/useAdmin";
 import useTeacher from "../hooks/useTeacher";
@@ -21,6 +22,7 @@ const navItems = (isAdmin,isTeacher, cartLength = 0) => {
       { to: "/dashboard/adminHome", icon: <FaHome />, label: "Admin Home" },
       { to: "/dashboard/teacherRequest", icon: <FaList />, label: "Teacher Request" },
       { to: "/dashboard/users", icon: <FaUsers />, label: "All Users" },
+       { to: "/dashboard/paymentHistory", icon: <FaStripe />, label: "Payment History" },
     ];
   } else if (isTeacher) {
     return [
