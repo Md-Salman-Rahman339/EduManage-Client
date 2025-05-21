@@ -1,5 +1,5 @@
 import React from "react";
-import { useLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 import { Tilt } from "react-tilt";
 import { motion } from "framer-motion";
 import { fadeIn } from "../../utils/motion";
@@ -50,7 +50,7 @@ const ClassDetailsPage = () => {
           <span className="text-blue-600 font-semibold text-xl">
             ${price}
           </span>
-          <Button variant="contained">Pay Now</Button>
+          <Link to="/payment"> <Button variant="contained">Pay Now</Button> </Link>
           <span className="text-gray-500">
             Enrolled Students: {totalEnrolment}
           </span>

@@ -13,6 +13,7 @@ import Dashboard from "../Layout/Dashboard";
 import Profile from "../pages/Profile/Profile";
 import AllUsers from "../Dashboard/AllUsers/AllUsers";
 import AllTeacherRequests from "../Dashboard/AllTeacherRequest/AllTeacherRequest";
+import Payment from "../Dashboard/Payment/Payment";
 
 
 
@@ -39,34 +40,11 @@ import AllTeacherRequests from "../Dashboard/AllTeacherRequest/AllTeacherRequest
 
           },
                 {
-          path: "classDetails/:id",
-          element: <ClassDetailsPage></ClassDetailsPage>,
-         loader: async ({ params }) => {
-          try {
-            const res = await fetch(`http://localhost:5000/class/${params.id}`);
+                path: "/classDetails/:id",
+                element: <PrivateRoute><ClassDetailsPage /></PrivateRoute>,
+                loader: ({ params }) => fetch(`http://localhost:5000/class/${params.id}`),
+              },
 
-            if (!res.ok) {
-              const error = await res.text();
-              throw new Error(`Fetch failed: ${res.status} - ${error}`);
-            }
-
-            const data = await res.json();
-
-            return data;
-          } catch (error) {
-            console.error("Failed to fetch class:", error.message);
-            throw new Response("Class Not Found", { status: 404, statusText: error.message });
-          }
-        }
-
-
-
-         
-
-        
-
-          
-        },
         {
           path:'dashboard',
           element:<PrivateRoute><Dashboard></Dashboard></PrivateRoute>,
@@ -88,6 +66,11 @@ import AllTeacherRequests from "../Dashboard/AllTeacherRequest/AllTeacherRequest
            },
 
           ]
+
+        },
+        {
+          path:'payment',
+          element:<PrivateRoute> <Payment></Payment> </PrivateRoute>
 
         },
        

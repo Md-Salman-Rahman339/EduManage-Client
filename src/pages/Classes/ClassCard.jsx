@@ -44,7 +44,8 @@ const ClassCard = ({ item, index }) => {
 
         <div className="mt-4 flex justify-between items-center text-sm">
           <span className="text-blue-600 font-semibold">${price}</span>
-         <Link to={`/classDetails/${_id}`}><Button>Enroll</Button></Link>
+        <Link to={`/classDetails/${_id}`}><Button>Enroll</Button></Link>
+
           <span className="text-gray-500">Enrolled: {totalEnrolment}</span>
         </div>
       </Tilt>
