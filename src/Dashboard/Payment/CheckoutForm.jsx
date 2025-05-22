@@ -1,8 +1,7 @@
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import React, { useEffect, useState } from 'react';
-
 import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 
@@ -11,15 +10,15 @@ const CheckoutForm = () => {
   const [clientSecret, setClientSecret] = useState('');
   const [transactionId, setTransactionId] = useState('');
   const [processing, setProcessing] = useState(false);
-  
   const { user } = useAuth();
   const stripe = useStripe();
   const elements = useElements();
   const axiosSecure = useAxiosSecure();
- 
   const navigate = useNavigate();
-
-  const totalPrice = ((total, item) => total + item.price, 0);
+  const location = useLocation();
+  
+  const { price = 0, title, classId } = location.state || {};
+  const totalPrice = parseFloat(price).toFixed(2);
 
   useEffect(() => {
     if (totalPrice > 0) {
@@ -28,109 +27,128 @@ const CheckoutForm = () => {
           setClientSecret(res.data.clientSecret);
         })
         .catch(err => {
-          console.error('Failed to create payment intent', err);
-          setError('Failed to initialize payment.');
+          console.error('Payment intent error:', err);
+          setError('Failed to initialize payment. Please try again.');
         });
     }
-  }, [axiosSecure, totalPrice]);
+  }, [totalPrice, axiosSecure]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!stripe || !elements) return;
-
-    const card = elements.getElement(CardElement);
-    if (!card) return;
+    
+    if (!stripe || !elements) {
+      setError('Stripe has not been initialized');
+      return;
+    }
 
     setProcessing(true);
     setError('');
     setTransactionId('');
 
-    const { error: methodError } = await stripe.createPaymentMethod({
-      type: 'card',
-      card,
-    });
+    try {
+      // Create payment method
+      const { error: stripeError, paymentMethod } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: elements.getElement(CardElement),
+      });
 
-    if (methodError) {
-      setError(methodError.message);
-      setProcessing(false);
-      return;
-    }
-
-    const { paymentIntent, error: confirmError } = await stripe.confirmCardPayment(clientSecret, {
-      payment_method: {
-        card,
-        billing_details: {
-          email: user?.email || 'anonymous',
-          name: user?.displayName || 'anonymous',
-        },
-      },
-    });
-
-    if (confirmError) {
-      setError(confirmError.message);
-      setProcessing(false);
-      return;
-    }
-
-    if (paymentIntent?.status === 'succeeded') {
-      setTransactionId(paymentIntent.id);
-      try {
-        const payment = {
-          email: user.email,
-          price: totalPrice,
-          transactionId: paymentIntent.id,
-          date: new Date(),
-          status: 'pending',
-        };
-        const res = await axiosSecure.post('/payments', payment);
-        console.log('Payment saved:', res.data);
-        if(res.data?.paymentResult?.insertedId){
-            Swal.fire({
-                position: "top-end",
-                icon: "success",
-                title: "Thank you for your payments",
-                showConfirmButton: false,
-                timer: 1500
-              });
-              navigate('/dashboard/paymentHistory')
-        }
-
-      } catch (err) {
-        console.error('Failed to save payment', err);
-        setError('Payment succeeded, but failed to save on server.');
+      if (stripeError) {
+        setError(stripeError.message);
+        setProcessing(false);
+        return;
       }
+
+      // Confirm payment
+      const { paymentIntent, error: confirmError } = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: paymentMethod.id,
+        receipt_email: user?.email,
+      });
+
+      if (confirmError) {
+        setError(confirmError.message);
+        setProcessing(false);
+        return;
+      }
+
+      if (paymentIntent.status === 'succeeded') {
+        setTransactionId(paymentIntent.id);
+        
+        // Save payment to database
+        const paymentData = {
+          email: user.email,
+          price: parseFloat(totalPrice),
+          transactionId: paymentIntent.id,
+          title: title || 'Class Payment',
+          classId: classId || null,
+          date: new Date().toISOString(),
+        };
+
+        const { data } = await axiosSecure.post('/payments', paymentData);
+        
+        if (data.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Payment Successful!',
+            text: `Your payment of $${totalPrice} has been processed.`,
+            confirmButtonText: 'View Payment History'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              navigate('/dashboard/paymentHistory');
+            }
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Payment processing error:', err);
+      setError('An error occurred during payment processing. Please try again.');
+    } finally {
+      setProcessing(false);
     }
-    setProcessing(false);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4 shadow rounded bg-white">
-      <CardElement
-        options={{
-          style: {
-            base: {
-              fontSize: '16px',
-              color: '#424770',
-              '::placeholder': { color: '#aab7c4' },
+    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold mb-4">Payment Details</h2>
+      {title && <p className="mb-2">Course: <span className="font-semibold">{title}</span></p>}
+      <p className="mb-4">Amount: <span className="font-bold text-green-600">${totalPrice}</span></p>
+      
+      <form onSubmit={handleSubmit}>
+        <CardElement
+          options={{
+            style: {
+              base: {
+                fontSize: '16px',
+                color: '#424770',
+                '::placeholder': { color: '#aab7c4' },
+              },
+              invalid: {
+                color: '#9e2146',
+              },
             },
-            invalid: { color: '#9e2146' },
-          },
-        }}
-      />
-      <button
-        className="btn btn-sm btn-primary my-4 w-full"
-        type="submit"
-        disabled={!stripe || !clientSecret || processing}
-      >
-        {processing ? 'Processing...' : `Pay $${totalPrice.toFixed(2)}`}
-      </button>
-      {error && <p className="text-red-600">{error}</p>}
-      {transactionId && (
-        <p className="text-green-600">
-          Payment successful! Transaction ID: {transactionId}
-        </p>
-      )}
-    </form>
+          }}
+          className="mb-4 p-3 border rounded"
+        />
+        
+        <button
+          type="submit"
+          disabled={!stripe || !clientSecret || processing}
+          className={`w-full py-2 px-4 rounded font-medium ${
+            processing || !stripe || !clientSecret
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-600 hover:bg-blue-700 text-white'
+          }`}
+        >
+          {processing ? 'Processing...' : `Pay $${totalPrice}`}
+        </button>
+        
+        {error && <p className="mt-3 text-red-500">{error}</p>}
+        {transactionId && (
+          <p className="mt-3 text-green-600">
+            Payment successful! Transaction ID: {transactionId}
+          </p>
+        )}
+      </form>
+    </div>
   );
 };
 

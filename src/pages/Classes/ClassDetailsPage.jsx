@@ -50,7 +50,7 @@ const ClassDetailsPage = () => {
           <span className="text-blue-600 font-semibold text-xl">
             ${price}
           </span>
-          <Link to="/payment"> <Button variant="contained">Pay Now</Button> </Link>
+          <Link to="/payment" state={{ price, title, classId: classData._id }}> <Button variant="contained">Pay Now</Button> </Link>
           <span className="text-gray-500">
             Enrolled Students: {totalEnrolment}
           </span>
