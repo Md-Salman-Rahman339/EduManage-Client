@@ -5,7 +5,7 @@ import { fadeIn } from "../../utils/motion";
 import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 
-const ClassCard = ({ item, index }) => {
+const ClassCard = ({ item, index, enrolledView}) => {
   const {
     _id,
     title,
@@ -44,7 +44,9 @@ const ClassCard = ({ item, index }) => {
 
         <div className="mt-4 flex justify-between items-center text-sm">
           <span className="text-blue-600 font-semibold">${price}</span>
-        <Link to={`/classDetails/${_id}`}><Button>Enroll</Button></Link>
+       <Link to={enrolledView ? `/dashboard/myenroll-class/${_id}` : `/classDetails/${_id}`}>
+            <Button>{enrolledView ? 'Continue' : 'Enroll'}</Button>
+          </Link>
 
           <span className="text-gray-500">Enrolled: {totalEnrolment}</span>
         </div>

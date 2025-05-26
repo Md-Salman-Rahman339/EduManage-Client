@@ -15,6 +15,13 @@ import AllUsers from "../Dashboard/AllUsers/AllUsers";
 import AllTeacherRequests from "../Dashboard/AllTeacherRequest/AllTeacherRequest";
 import Payment from "../Dashboard/Payment/Payment";
 import PaymentHistory from "../Dashboard/PaymentHistory/PaymentHistory";
+import MyEnrolledClasses from "../Dashboard/MyEnrolledClasses/MyEnrolledClasses";
+import AddClass from "../Dashboard/AddClass/AddClass";
+import myClass from "../Dashboard/MyClass/MyClass";
+import MyClass from "../Dashboard/MyClass/MyClass";
+import AdminClassApproval from "../Dashboard/AdminClassApproval/AdminClassApproval";
+import MyClassDetails from "../Dashboard/myClassDetails/myClassDetails";
+import MyEnrollClassDetails from "../Dashboard/MyEnrollClassDetails/MyEnrollClassDetails";
 
 
 
@@ -70,6 +77,36 @@ import PaymentHistory from "../Dashboard/PaymentHistory/PaymentHistory";
              element: <PaymentHistory></PaymentHistory>
 
            },
+            {
+             path: 'enrolledClass',
+             element: <MyEnrolledClasses></MyEnrolledClasses>
+
+           },
+           {
+            path: 'addClass',
+             element: <AddClass></AddClass>
+
+           },
+           {
+            path: 'myClass',
+             element: <MyClass></MyClass>
+
+           },
+            {
+            path: 'AllClass',
+             element: <AdminClassApproval></AdminClassApproval>
+
+           },
+            {
+            path: 'myClassDetails/:id',
+             element: <MyClassDetails></MyClassDetails>
+
+           },
+            {
+            path: 'myenroll-class/:id',
+             element: <MyEnrollClassDetails></MyEnrollClassDetails>
+
+           }
 
           ]
 

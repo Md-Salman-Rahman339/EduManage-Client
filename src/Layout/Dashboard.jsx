@@ -9,7 +9,8 @@ import {
   FaHome, FaList, FaUsers, FaUtensils, FaBook, FaShoppingCart, FaCalendar, FaAd, FaEnvelope, FaSearch,
   FaChalkboardTeacher,
   FaUser,
-  FaStripe
+  FaStripe,
+  FaAdjust
 } from "react-icons/fa";
 import useAdmin from "../hooks/useAdmin";
 import useTeacher from "../hooks/useTeacher";
@@ -19,7 +20,7 @@ const navItems = (isAdmin,isTeacher, cartLength = 0) => {
   if (isAdmin) {
     return [
       { to: "/dashboard/profile", icon: <FaUser />, label: "My Profile" },
-      { to: "/dashboard/adminHome", icon: <FaHome />, label: "Admin Home" },
+      { to: "/dashboard/AllClass", icon: <FaHome />, label: "All Class" },
       { to: "/dashboard/teacherRequest", icon: <FaList />, label: "Teacher Request" },
       { to: "/dashboard/users", icon: <FaUsers />, label: "All Users" },
        { to: "/dashboard/paymentHistory", icon: <FaStripe />, label: "Payment History" },
@@ -28,14 +29,14 @@ const navItems = (isAdmin,isTeacher, cartLength = 0) => {
     return [
       { to: "/dashboard/profile", icon: <FaUser />, label: "My Profile" },
       { to: "/dashboard/teacherHome", icon: <FaHome />, label: "Teacher Home" },
-      { to: "/dashboard/addClass", icon: <FaUtensils />, label: "Add Class" },
+      { to: "/dashboard/addClass", icon: <FaAdjust />, label: "Add Class" },
       { to: "/dashboard/myClass", icon: <FaBook />, label: "My Class" },
     ];
   } else {
     return [
       { to: "/dashboard/profile", icon: <FaUser />, label: "My Profile" },
       { to: "/dashboard/userHome", icon: <FaHome />, label: "User Home" },
-      { to: "/dashboard/myEnrollClass", icon: <FaBook />, label: "My Enrolled Class" },
+      { to: "/dashboard/enrolledClass", icon: <FaBook />, label: "My Enrolled Class" },
     { to: "/dashboard/applyforteacher", icon: <FaChalkboardTeacher />, label: "Teach On Edumanage" },
     ];
   }
