@@ -7,34 +7,33 @@ import Swal from 'sweetalert2';
 import SocialLogin from '../../components/SocialLogin/SocialLogin';
 
 const Login = () => {
+    const { login } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/";
 
-    const {signIn}=useContext(AuthContext);
-     const navigate = useNavigate();
-     const location = useLocation();
- 
-     const from = location.state?.from?.pathname || "/";
-      const handleLogin=event=>{
+    const handleLogin = event => {
         event.preventDefault();
-        const form=event.target;
-        const email=form.email.value;
-        const password=form.password.value;
-        signIn(email,password)
-        .then(result=>{
-            const user=result.user;
-            console.log(user)
-               Swal.fire({
-                title: 'User Login Successful.',
-                showClass: {
-                  popup: 'animate__animated animate__fadeInDown'
-                },
-                hideClass: {
-                  popup: 'animate__animated animate__fadeOutUp'
-                }
-              })
-               navigate(from, { replace: true });
-        })
-        // console.log(email,password)
-    }
+        const form = event.target;
+        const email = form.email.value;
+        const password = form.password.value;
+        
+        login({ email, password })
+            .then(() => {
+                Swal.fire({
+                    title: 'Login Successful',
+                    icon: 'success'
+                });
+                navigate(from, { replace: true });
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: 'Login Failed',
+                    text: error.response?.data?.detail || 'Invalid credentials',
+                    icon: 'error'
+                });
+            });
+    };
 
   return (
    <div className="hero min-h-screen bg-base-200">

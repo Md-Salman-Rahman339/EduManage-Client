@@ -1,103 +1,120 @@
+
 import { createContext, useEffect, useState } from "react";
- import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
-import { auth } from "../firebase/firebase.init";
 import useAxiosPublic from "../hooks/useAxiosPublic";
 
- 
- 
- export const AuthContext = createContext(null);
- 
+export const AuthContext = createContext(null);
 
- 
- const AuthProvider = ({children}) => {
-     const [user, setUser] = useState(null);
-     const [loading, setLoading] = useState(true);
-     const googleProvider=new GoogleAuthProvider();
-     const axiosPublic=useAxiosPublic();
- 
-     const createUser = (email, password) => {
-         setLoading(true);
-         return createUserWithEmailAndPassword(auth, email, password)
-     }
-     const googleSignIn=()=>{
+const AuthProvider = ({children}) => {
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const axiosPublic = useAxiosPublic();
+
+    const createUser = (userData) => {
         setLoading(true);
-        return signInWithPopup(auth,googleProvider);
-     }
- 
-     const signIn = (email, password) => {
-         setLoading(true);
-         return signInWithEmailAndPassword(auth,email, password);
-     }
- 
-     const logOut = () =>{
-         setLoading(true);
-         return signOut(auth);
-     }
-    //   const updateUserProfile = (name,  photoURL) => {
-    //     return updateProfile(auth.currentUser, {
-    //         displayName: name, photoURL:  photoURL,
-    //     });
-    // }
-                const updateUserProfile = (name, photoURL = "") => {
-            setLoading(true);
-            const updateData = {
-                displayName: name
-            };
-            
-            // Only add photoURL if it's provided
-            if (photoURL) {
-                updateData.photoURL = photoURL;
-            }
+        return axiosPublic.post('/api/users/create/', userData)
+            .then(res => {
+                // Automatically log in the user after creation
+                return login({email: userData.email, password: userData.password});
+            });
+    }
 
-            return updateProfile(auth.currentUser, updateData)
-                .then(() => {
-                setLoading(false);
-                })
-                .catch(error => {
-                setLoading(false);
-                throw error;
-                });
-            }
- 
-     useEffect( () =>{
-         const unsubscribe = onAuthStateChanged(auth, currentUser =>{
-             setUser(currentUser);
-             if(currentUser){
-                const userInfo={email:currentUser.email};
-                axiosPublic.post('/jwt',userInfo)
-                .then(res=>{
-                    if(res.data.token){
-                        localStorage.setItem('access-token',res.data.token)
+    // const login = (credentials) => {
+    //     setLoading(true);
+    //     return axiosPublic.post('/api/token/', credentials)
+    //         .then(res => {
+    //             const { access, refresh } = res.data;
+    //             localStorage.setItem('access-token', access);
+    //             localStorage.setItem('refresh-token', refresh);
+    //             // Get user info
+    //             return axiosPublic.get(`/api/users/by-email/?email=${user.email}`)
+    //                 .then(userRes => {
+    //                     setUser(userRes.data);
+    //                     return userRes.data;
+    //                 });
+    //         });
+    // }
+    const login = (credentials) => {
+    setLoading(true);
+    return axiosPublic.post('/api/token/', credentials)
+        .then(res => {
+            const { access, refresh } = res.data;
+            localStorage.setItem('access-token', access);
+            localStorage.setItem('refresh-token', refresh);
+
+            // Fetch the current user info using token
+            return axiosPublic.get('/api/users/me/', {
+                headers: {
+                    Authorization: `Bearer ${access}`
+                }
+            }).then(userRes => {
+                setUser(userRes.data);
+                return userRes.data;
+            });
+        });
+};
+
+    const logout = () => {
+        setLoading(true);
+        localStorage.removeItem('access-token');
+        localStorage.removeItem('refresh-token');
+        setUser(null);
+        setLoading(false);
+    }
+
+    // useEffect(() => {
+    //     const token = localStorage.getItem('access-token');
+    //     if (token) {
+    //         // Verify token and get user info
+    //         axiosPublic.get('/api/users/me/')  // You'll need to create this endpoint
+    //             .then(res => {
+    //                 setUser(res.data);
+    //             })
+    //             .catch(() => {
+    //                 localStorage.removeItem('access-token');
+    //                 localStorage.removeItem('refresh-token');
+    //             })
+    //             .finally(() => setLoading(false));
+    //     } else {
+    //         setLoading(false);
+    //     }
+    // }, [axiosPublic]);
+            useEffect(() => {
+            const token = localStorage.getItem('access-token');
+            if (token) {
+                // Verify token and get user info
+                axiosPublic.get('/api/users/me/', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
                     }
                 })
+                .then(res => {
+                    setUser(res.data);
+                })
+                .catch(() => {
+                    localStorage.removeItem('access-token');
+                    localStorage.removeItem('refresh-token');
+                })
+                .finally(() => setLoading(false));
+            } else {
+                setLoading(false);
+            }
+        }, [axiosPublic]);
 
-             }
-             else{
-                localStorage.removeItem('access-token')
-             }
-            //  console.log('current user', currentUser);
-             setLoading(false);
-         });
-         return () => {
-             return unsubscribe();
-         }
-     }, [axiosPublic])
- 
-     const authInfo = {
-         user,
-         loading,
-         createUser,
-         signIn,
-        //  googleProvider,
-        googleSignIn,
-         logOut,updateUserProfile
-     }
-     
-     return (
-         <AuthContext.Provider value={authInfo}>
-             {children}
-         </AuthContext.Provider>
-     );
- };
- 
- export default AuthProvider;
+
+
+    const authInfo = {
+        user,
+        loading,
+        createUser,
+        login,
+        logout
+    };
+    
+    return (
+        <AuthContext.Provider value={authInfo}>
+            {children}
+        </AuthContext.Provider>
+    );
+};
+
+export default AuthProvider;

@@ -23,10 +23,10 @@ const MyEnrollClassDetails = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const classRes = await axiosSecure.get(`/class/${id}`);
+        const classRes = await axiosSecure.get('/api/enrollments/enrolled-classes/');
         setCls(classRes.data);
 
-        const assignmentsRes = await axiosSecure.get(`/assignments?classId=${id}`);
+        const assignmentsRes = await axiosSecure.get(`/api/assignments?class_id=${id}`);
         setAssignments(assignmentsRes.data);
 
         const submissionsRes = await axiosSecure.get(`/submissions?classId=${id}`);
@@ -137,7 +137,7 @@ const MyEnrollClassDetails = () => {
               </TableHead>
               <TableBody>
                 {assignments.map((assignment) => (
-                  <TableRow key={assignment._id}>
+                  <TableRow key={assignment.id}>
                     <TableCell>{assignment.title}</TableCell>
                     <TableCell>{assignment.description}</TableCell>
                     <TableCell>

@@ -14,9 +14,9 @@ const ClassDetailsPage = () => {
     name,
     image,
     price,
-    description,
-    shortDescription,
-    totalEnrolment,
+    // description,
+    short_description,
+    total_enrolment,
   } = classData ||{};
 
   return (
@@ -40,19 +40,19 @@ const ClassDetailsPage = () => {
           Instructor: {name}
         </p>
         <p className="text-gray-700 dark:text-secondary text-[16px] mb-4">
-          {shortDescription}
+          {short_description}
         </p>
-        <p className="text-gray-700 dark:text-secondary text-[15px] mb-4">
+        {/* <p className="text-gray-700 dark:text-secondary text-[15px] mb-4">
           {description}
-        </p>
+        </p> */}
 
         <div className="flex justify-between items-center">
           <span className="text-blue-600 font-semibold text-xl">
             ${price}
           </span>
-          <Link to="/payment" state={{ price, title, classId: classData._id }}> <Button variant="contained">Pay Now</Button> </Link>
+          <Link to="/payment" state={{ price, title, classId: classData.id }}> <Button variant="contained">Pay Now</Button> </Link>
           <span className="text-gray-500">
-            Enrolled Students: {totalEnrolment}
+            Enrolled Students: {total_enrolment}
           </span>
         </div>
       </Tilt>

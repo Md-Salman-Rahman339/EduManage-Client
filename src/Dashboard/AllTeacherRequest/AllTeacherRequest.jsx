@@ -8,18 +8,18 @@ const AllTeacherRequests = () => {
   const [isAdmin, isAdminLoading] = useAdmin();
 
   const { data: requests = [], refetch } = useQuery({
-    queryKey: ['teacher-requests'],
-    enabled: isAdmin, // Only fetch if admin
+    queryKey: ['/api/users/teacher-requests'],
+    enabled: isAdmin, 
     queryFn: async () => {
-      const res = await axiosSecure.get('/teacher-requests');
+      const res = await axiosSecure.get('/api/users/teacher-requests');
       return res.data;
     },
   });
 
   const handleApprove = async (req) => {
     try {
-      const res = await axiosSecure.patch(`/teacher-requests/approve/${req._id}`);
-      if (res.data.modifiedCount > 0) {
+      const res = await axiosSecure.patch(`/api/users/teacher-requests/approve/${req.id}/`);
+      if (res.data.success) {
         refetch();
         Swal.fire('Success', `${req.name} has been approved and promoted to Teacher`, 'success');
       }
@@ -31,8 +31,8 @@ const AllTeacherRequests = () => {
 
   const handleReject = async (req) => {
     try {
-      const res = await axiosSecure.patch(`/teacher-requests/reject/${req._id}`);
-      if (res.data.modifiedCount > 0) {
+      const res = await axiosSecure.patch(`/api/users/teacher-requests/reject/${req.id}/`);
+      if (res.data.success) {
         refetch();
         Swal.fire('Rejected', `${req.name}'s request has been rejected`, 'info');
       }
@@ -64,7 +64,7 @@ const AllTeacherRequests = () => {
           </thead>
           <tbody>
             {requests.map((req, idx) => (
-              <tr key={req._id}>
+              <tr key={req.id}>
                 <td>{idx + 1}</td>
                 <td>
                   <div className="avatar">

@@ -11,7 +11,7 @@ const AllUsers = () => {
      const { data: users = [],refetch } = useQuery({
          queryKey: ['users'],
          queryFn: async () => {
-             const res = await axiosSecure.get('/users')
+             const res = await axiosSecure.get('/api/users/users/')
             // ,{
             //     headers:{
             //         authorization:`Bearer ${localStorage.getItem('access-token')}`
@@ -23,7 +23,7 @@ const AllUsers = () => {
          }
      })
        const handleMakeAdmin = user =>{
-         axiosSecure.patch(`/users/admin/${user._id}`)
+         axiosSecure.patch(`/api/users/users/make-admin/${user.id}/`)
           .then(res =>{
             console.log(res.data)
             if(res.data.modifiedCount > 0){
@@ -87,7 +87,7 @@ const AllUsers = () => {
                      </thead>
                      <tbody>
                          {
-                             users.map((userd,index) => <tr key={userd._id}>
+                             users.map((userd,index) => <tr key={userd.id}>
                                  <th>{index+1}</th>
 
 
@@ -98,7 +98,7 @@ const AllUsers = () => {
             <div className="avatar">
               <div className="mask mask-squircle h-12 w-12">
                 <img
-                  src={user.photoURL}
+                  src={userd.photo}
                   alt="Avatar Tailwind CSS Component" />
               </div>
             </div>
@@ -112,7 +112,7 @@ const AllUsers = () => {
 
                                  <td>{userd.name}</td>
                                  <td>{userd.email}</td>
-                                <td>  { user.role === 'admin' ? 'Admin' :  <button
+                                <td>  { userd.role === 'admin' ? 'Admin' :  <button
                                          onClick={() => handleMakeAdmin(userd)}
                                          className="btn btn-lg bg-blue-500">
                                          <FaUsers className="text-white 

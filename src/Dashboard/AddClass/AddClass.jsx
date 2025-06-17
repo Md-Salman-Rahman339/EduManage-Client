@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useAxiosPublic from "../../hooks/useAxiosPublic";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const AddClass = () => {
   const { user } = useAuth();
-  const axiosPublic = useAxiosPublic();
+  // const axiosPublic = useAxiosPublic();
+  const axiosSecure=useAxiosSecure();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -15,15 +17,15 @@ const AddClass = () => {
     email: "",
     image: "",
     price: "",
-    description: "",
-    status: "pending", // fixed value
+    short_description: "",
+    status: "pending", 
   });
 
   useEffect(() => {
     if (user) {
       setFormData((prev) => ({
         ...prev,
-        name: user.displayName || "",
+        name: user.name || "",
         email: user.email || "",
       }));
     }
@@ -40,14 +42,14 @@ const AddClass = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { title, name, email, image, price, description } = formData;
-    if (!title || !name || !email || !image || !price || !description) {
+    const { title, name, email, image, price,short_description } = formData;
+    if (!title || !name || !email || !image || !price || !short_description) {
       Swal.fire("Missing Fields", "Please fill in all required fields", "warning");
       return;
     }
 
     try {
-      await axiosPublic.post("/my-class", formData);
+      await axiosSecure.post("/api/classes/my-classes/create/", formData);
       Swal.fire("Success", "Class submitted for review!", "success");
       navigate("/dashboard/myClass");
     } catch (error) {
@@ -108,8 +110,8 @@ const AddClass = () => {
         />
 
         <textarea
-          name="description"
-          value={formData.description}
+          name="short_description"
+          value={formData.short_description}
           onChange={handleChange}
           placeholder="Description"
           className="w-full px-4 py-2 border rounded"

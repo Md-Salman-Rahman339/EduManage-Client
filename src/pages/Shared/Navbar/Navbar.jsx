@@ -74,11 +74,11 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../../../providers/AuthProvider';
 
 const Navbar = () => {
-  const { user, logOut } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleLogOut = () => {
-    logOut()
+      logout()
       .then(() => { })
       .catch(error => console.log(error));
     setDropdownOpen(false);
@@ -125,7 +125,7 @@ const Navbar = () => {
             <div className="relative">
               <div className="avatar cursor-pointer" onClick={() => setDropdownOpen(!dropdownOpen)}>
                 <div className="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                  <img src={user.photoURL} alt="User Avatar" />
+                  <img src={user.photo} alt="User Avatar" />
                 </div>
               </div>
 

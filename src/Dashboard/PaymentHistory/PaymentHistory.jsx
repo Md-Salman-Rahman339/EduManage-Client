@@ -12,7 +12,7 @@ const PaymentHistory = () => {
   const { data: payments = [], isLoading } = useQuery({
     queryKey: ['payments', user.email],
     queryFn: async () => {
-      const url = isAdmin ? '/admin/payments' : `/payments/${user.email}`;
+      const url = isAdmin ? '/api/payments/admin/' : `/api/payments/history/${user.email}`;
       const res = await axiosSecure.get(url);
       return res.data;
     },
@@ -44,8 +44,8 @@ const PaymentHistory = () => {
               <tr key={payment._id}>
                 <td>{index + 1}</td>
                 {isAdmin && <td>{payment.email}</td>}
-                <td>${payment.price}</td>
-                <td>{payment.transactionId}</td>
+                <td>${payment.amount}</td>
+                <td>{payment.transaction_id}</td>
                 <td>{payment.status}</td>
                 <td>{payment.date || 'N/A'}</td>
               </tr>

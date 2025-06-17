@@ -16,14 +16,14 @@ const AdminClassApproval = () => {
         queryKey: ['pending-classes'],
         enabled: isAdmin,
         queryFn: async () => {
-            const res = await axiosSecure.get('/classes/pending');
+            const res = await axiosSecure.get('/api/classes/pending-classes/');
             return res.data;
         }
     });
 
     const handleApprove = async (id) => {
         try {
-            const result = await axiosSecure.patch(`/classes/approve/${id}`);
+            const result = await axiosSecure.patch(`/api/classes/approve-class/${id}/`);
             if (result.data.modifiedCount > 0) {
                 refetch();
                 Swal.fire('Approved!', 'The class has been approved and will now appear on the site.', 'success');
@@ -36,7 +36,7 @@ const AdminClassApproval = () => {
 
     const handleReject = async (id) => {
         try {
-            const result = await axiosSecure.patch(`/classes/reject/${id}`);
+            const result = await axiosSecure.patch(`/api/classes/reject-class/${id}`);
             if (result.data.modifiedCount > 0) {
                 refetch();
                 Swal.fire('Rejected!', 'The class has been rejected.', 'info');
@@ -108,7 +108,7 @@ const AdminClassApproval = () => {
                                         variant="contained"
                                         color="success"
                                         size="small"
-                                        onClick={() => handleApprove(cls._id)}
+                                        onClick={() => handleApprove(cls.id)}
                                         disabled={cls.status !== 'pending'}
                                     >
                                         Approve
@@ -117,7 +117,7 @@ const AdminClassApproval = () => {
                                         variant="contained"
                                         color="error"
                                         size="small"
-                                        onClick={() => handleReject(cls._id)}
+                                        onClick={() => handleReject(cls.id)}
                                         disabled={cls.status !== 'pending'}
                                     >
                                         Reject
@@ -126,7 +126,7 @@ const AdminClassApproval = () => {
                                         variant="contained"
                                         color="info"
                                         size="small"
-                                        onClick={() => handleViewProgress(cls._id)}
+                                        onClick={() => handleViewProgress(cls.id)}
                                         disabled={cls.status !== 'approved'}
                                     >
                                         Progress

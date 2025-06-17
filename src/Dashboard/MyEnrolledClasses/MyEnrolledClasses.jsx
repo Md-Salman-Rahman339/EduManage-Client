@@ -17,7 +17,7 @@ const MyEnrolledClasses = () => {
   } = useQuery({
     queryKey: ['enrolled-classes', user?.email],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/enrolled-classes/${user.email}`);
+      const res = await axiosSecure.get(`/api/enrollments/enrolled-classes/${user.email}`);
       return res.data;
     },
     enabled: !!user?.email
@@ -27,11 +27,13 @@ const MyEnrolledClasses = () => {
   if (error) return <p className="text-center text-red-500">Error loading classes</p>;
 
   return (
+    
     <div className="container mx-auto px-4 py-8">
       <SectionTitle 
         heading="My Enrolled Classes" 
         subHeading="Courses you've joined" 
       />
+      <h1>Total Enrolled: {enrolledClasses.length}</h1>
 
       {enrolledClasses.length === 0 ? (
         <div className="text-center py-12">
@@ -41,8 +43,8 @@ const MyEnrolledClasses = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mt-8">
           {enrolledClasses.map((item, index) => (
             <ClassCard 
-              key={item._id} 
-              item={item} 
+              key={item.id} 
+              item={item.class_obj} 
               index={index}  
               enrolledView={true}
             />

@@ -4,11 +4,13 @@ import useAuth from "../../hooks/useAuth";
 import axios from "axios";
 import useAxiosPublic from "../../hooks/useAxiosPublic";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const TeachOnEdumanage = () => {
   const { user, role } = useAuth(); 
   const navigate = useNavigate();
-  const axiosPublic = useAxiosPublic();
+  // const axiosPublic = useAxiosPublic();
+  const axiosSecure = useAxiosSecure();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -26,13 +28,13 @@ const TeachOnEdumanage = () => {
     if (user) {
       setFormData((prev) => ({
         ...prev,
-        name: user.displayName || "",
+        name: user.name || "",
         email: user.email || "",
-        image: user.photoURL || "",
+        image: user.photo || "",
       }));
 
       // Fetch existing request status
-      axiosPublic.get(`/teacher-request/${user.email}`).then((res) => {
+      axiosSecure.get(`/api/users/teacher/${user.email}/`).then((res) => {
         if (res.data) {
           setRequestStatus(res.data.status);
         }
@@ -62,7 +64,7 @@ const TeachOnEdumanage = () => {
     }
 
     try {
-      await axiosPublic.post("/teacher-request", formData);
+      await axiosSecure.post("/api/users/teacher-request/", formData);
       setRequestStatus("pending");
 
       Swal.fire({
@@ -82,7 +84,7 @@ const TeachOnEdumanage = () => {
 
   const handleReRequest = async () => {
     try {
-      await axiosPublic.put(`/teacher-request/${user?.email}`, {
+      await axiosSecure.put(`/api/users/teacher/${user?.email}/`, {
         ...formData,
         status: "pending",
       });

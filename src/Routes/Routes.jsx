@@ -50,7 +50,7 @@ import MyEnrollClassDetails from "../Dashboard/MyEnrollClassDetails/MyEnrollClas
                 {
                 path: "/classDetails/:id",
                 element: <PrivateRoute><ClassDetailsPage /></PrivateRoute>,
-                loader: ({ params }) => fetch(`http://localhost:5000/class/${params.id}`),
+                loader: ({ params }) => fetch(`http://127.0.0.1:8000/api/classes/${params.id}`),
               },
 
         {

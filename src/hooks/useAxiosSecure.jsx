@@ -1,11 +1,11 @@
+
 import { useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const axiosSecure = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+  baseURL: 'http://127.0.0.1:8000',
   withCredentials: true,
-  timeout: 10000, // 10 second timeout
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
@@ -16,7 +16,6 @@ const useAxiosSecure = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Request interceptor
     const requestInterceptor = axiosSecure.interceptors.request.use(
       (config) => {
         const token = localStorage.getItem('access-token');
@@ -25,40 +24,36 @@ const useAxiosSecure = () => {
         }
         return config;
       },
-      (error) => {
-        return Promise.reject(error);
-      }
+      (error) => Promise.reject(error)
     );
 
-    // Response interceptor
     const responseInterceptor = axiosSecure.interceptors.response.use(
       (response) => response,
       async (error) => {
-        if (error.code === 'ECONNABORTED') {
-          console.error('Request timeout');
-          return Promise.reject({ 
-            message: 'Request timeout. Please try again.' 
-          });
-        }
-
-        if (error.response) {
-          const { status, data } = error.response;
+        const originalRequest = error.config;
+        
+        if (error.response?.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
           
-          if (status === 400) {
-            console.error('Validation Error:', data.message || 'Invalid request');
-            return Promise.reject(data);
-          }
-
-          if (status === 401 || status === 403) {
-            console.error('Auth Error - Redirecting to login');
-            localStorage.removeItem('access-token');
-            navigate('/login', { 
-              state: { from: window.location.pathname },
-              replace: true 
+          try {
+            const refreshToken = localStorage.getItem('refresh-token');
+            if (!refreshToken) throw new Error('No refresh token');
+            
+            const response = await axiosSecure.post('/api/token/refresh/', {
+              refresh: refreshToken
             });
+            
+            localStorage.setItem('access-token', response.data.access);
+            originalRequest.headers.Authorization = `Bearer ${response.data.access}`;
+            return axiosSecure(originalRequest);
+          } catch (refreshError) {
+            localStorage.removeItem('access-token');
+            localStorage.removeItem('refresh-token');
+            navigate('/login', { replace: true });
+            return Promise.reject(refreshError);
           }
         }
-
+        
         return Promise.reject(error);
       }
     );

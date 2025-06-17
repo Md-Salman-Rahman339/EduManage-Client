@@ -11,7 +11,7 @@ const useTeacher = () => {
     enabled: !!user?.email,
     queryKey: [user?.email, 'isTeacher'],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/users/teacher/${user.email}`);
+      const res = await axiosSecure.get(`/api/users/teacher/${user.email}`);
        return res.data?.teacher;
     }
   });
